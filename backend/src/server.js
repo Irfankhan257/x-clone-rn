@@ -1,7 +1,14 @@
-import express from "express"
+import express from "express";
+import { ENV } from "./config/env.js";
+import { connectDB } from "./config/db.js";
 
+const app = express();
+connectDB();
 
-const app = express()
+app.get("/", (req, res) => {
+  console.log("HELLO FROM SERVER");
+});
 
-
-app.listen("5001", () => console.log("app is running on http://localhost:5001"))
+app.listen(ENV.PORT, () =>
+  console.log(`app is running on http://localhost:${ENV.PORT}`)
+);
