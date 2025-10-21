@@ -35,9 +35,11 @@ app.use((err, req, res) => {
 const startServer = async () => {
   try {
     await connectDB();
-    app.listen(ENV.PORT, () =>
-      console.log(`app is running on http://localhost:${ENV.PORT}`)
-    );
+    if (ENV.NODE_ENV != "production") {
+      app.listen(ENV.PORT, () =>
+        console.log(`app is running on http://localhost:${ENV.PORT}`)
+      );
+    }
   } catch (error) {
     console.log("there is an error");
     process.exit(1);
@@ -45,3 +47,5 @@ const startServer = async () => {
 };
 
 startServer();
+
+export default app;
