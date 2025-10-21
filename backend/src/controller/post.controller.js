@@ -3,6 +3,8 @@ import asyncHandler from "express-async-handler";
 import Post from "../models/post.model.js";
 import cloudinary from "../config/cloudinary.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
+import Comment from "../models/comment.model.js";
 
 export const getPosts = asyncHandler(async (req, res) => {
   const posts = await Post.find()
