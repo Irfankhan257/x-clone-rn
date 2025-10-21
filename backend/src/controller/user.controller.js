@@ -7,7 +7,7 @@ export const getuserProfile = asyncHandler(async (req, res) => {
   const { username } = req.params;
   const user = await User.findOne({ username });
 
-  if (!user) return res.status(404).json({ error: "User not found" });
+  if (!user) return res.status(401).json({ error: "User not found" });
 
   res.status(200).json({ user });
 });
@@ -61,17 +61,18 @@ export const getCurrentUser = asyncHandler(async (req, res) => {
   res.status(200).json({ user });
 });
 
-
 export const followUser = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
   const { targetUserId } = req.params;
 
-  if (userId === targetUserId) return res.status(400).json({ error: "You cannot follow yourself" });
+  if (userId === targetUserId)
+    return res.status(400).json({ error: "You cannot follow yourself" });
 
   const currentUser = await User.findOne({ clerkId: userId });
   const targetUser = await User.findById(targetUserId);
 
-  if (!currentUser || !targetUser) return res.status(404).json({ error: "User not found" });
+  if (!currentUser || !targetUser)
+    return res.status(404).json({ error: "User not found" });
 
   const isFollowing = currentUser.following.includes(targetUserId);
 
@@ -101,6 +102,8 @@ export const followUser = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({
-    message: isFollowing ? "User unfollowed successfully" : "User followed successfully",
+    message: isFollowing
+      ? "User unfollowed successfully"
+      : "User followed successfully",
   });
 });
