@@ -19,7 +19,7 @@ app.use(clerkMiddleware());
 app.use(arcjetMiddleware);
 
 app.get("/", (req, res) => {
-  console.log("HELLO FROM SERVER");
+  res.send("HELLO FROM SERVER");
 });
 
 app.use("/api/user", userRoutes);
@@ -27,7 +27,7 @@ app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/notification", notificationRoutes);
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   console.error("Unhandled error:", err);
   res.status(500).json({ error: err.message || "Internal server error" });
 });
