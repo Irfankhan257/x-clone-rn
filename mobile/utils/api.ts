@@ -1,7 +1,9 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "https://x-clone-rn-sepia-six.vercel.app/api";
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL ||
+  "https://x-clone-rn-sepia-six.vercel.app/api";
 
 export const createApiClient = (
   getToken: () => Promise<string | null>
@@ -20,8 +22,6 @@ export const createApiClient = (
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log(config, "configconfigconfigconfig");
-
     return config;
   });
   return api;
@@ -34,7 +34,7 @@ export const useApiClient = (): AxiosInstance => {
 
 export const userApi = {
   syncUser: (api: AxiosInstance) => api.post("/user/sync"),
-  getCurrentUser: (api: AxiosInstance) => api.get("/users/me"),
+  getCurrentUser: (api: AxiosInstance) => api.get("/user/me"),
   updateProfile: (api: AxiosInstance, data: any) =>
     api.put("/users/profile", data),
 };
