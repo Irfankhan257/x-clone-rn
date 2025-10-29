@@ -12,8 +12,7 @@ export const useCurrentUser = () => {
   } = useQuery({
     queryKey: ["authUser"],
     queryFn: () => userApi.getCurrentUser(api),
-    select: (response) =>
-      console.log("Got user successfully:", response.data.user),
+    select: (response) => response.data.user,
   });
 
   return { currentUser, isLoading, error, refetch };

@@ -38,3 +38,20 @@ export const userApi = {
   updateProfile: (api: AxiosInstance, data: any) =>
     api.put("/users/profile", data),
 };
+
+export const postApi = {
+  createPost: (api: AxiosInstance, data: { content: string; image?: string }) =>
+    api.post("/post", data),
+  getPosts: (api: AxiosInstance) => api.get("/post"),
+  getUserPosts: (api: AxiosInstance, username: string) =>
+    api.get(`/post/user/${username}`),
+  likePost: (api: AxiosInstance, postId: string) =>
+    api.post(`/post/${postId}/like`),
+  deletePost: (api: AxiosInstance, postId: string) =>
+    api.delete(`/post/${postId}`),
+};
+
+export const commentApi = {
+  createComment: (api: AxiosInstance, postId: string, content: string) =>
+    api.post(`/comments/post/${postId}`, { content }),
+};
