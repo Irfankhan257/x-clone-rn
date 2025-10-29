@@ -9,6 +9,7 @@ const TabsLayout = () => {
   const inset = useSafeAreaInsets();
   const { isSignedIn } = useAuth();
 
+
   if (isSignedIn === undefined) {
     return (
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
