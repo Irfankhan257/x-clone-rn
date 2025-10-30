@@ -14,10 +14,12 @@ export const getuserProfile = asyncHandler(async (req, res) => {
 
 export const updateProfile = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
-
-  const user = await User.findByIdAndUpdate({ clerkId: userId }, req.body, {
-    new: ture,
-  });
+  
+  const user = await User.findOneAndUpdate(
+    { clerkId: userId }, // this matches by your custom field
+    req.body,
+    { new: true } // return updated document
+  );
 
   if (!user) res.status(404).json({ message: "User not found" });
 
