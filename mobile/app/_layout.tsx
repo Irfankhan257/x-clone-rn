@@ -5,6 +5,7 @@ import { tokenCache } from "@clerk/clerk-expo/token-cache";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 
 import "../global.css";
+import { StatusBar } from "expo-status-bar";
 
 export default function RootLayout() {
   const queryClient = new QueryClient();
@@ -15,6 +16,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="(auth)" />
         </Stack>
+        <StatusBar style="dark" />
       </QueryClientProvider>
     </ClerkProvider>
   );
