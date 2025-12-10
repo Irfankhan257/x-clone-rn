@@ -10,7 +10,10 @@ import { StatusBar } from "expo-status-bar";
 export default function RootLayout() {
   const queryClient = new QueryClient();
   return (
-    <ClerkProvider tokenCache={tokenCache}>
+    <ClerkProvider
+      publishableKey="pk_test_ZGVzdGluZWQtc3VuZmlzaC00Ni5jbGVyay5hY2NvdW50cy5kZXYk"
+      tokenCache={tokenCache}
+    >
       <QueryClientProvider client={queryClient}>
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />

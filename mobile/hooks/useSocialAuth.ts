@@ -13,6 +13,7 @@ export const useSocialAuth = () => {
     try {
       // 👇 Create a valid redirect URL that matches your Expo Router page
       const redirectUrl = Linking.createURL("/sso-callback");
+      console.log("redirectUrl:", Linking.createURL("/sso-callback"));
 
       const { createdSessionId, setActive } = await startSSOFlow({
         strategy,
