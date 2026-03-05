@@ -65,11 +65,17 @@ const PostCard = ({
           )}
 
           {post.image && (
-            <Image
+              <TouchableOpacity
+              className="flex-row items-center"
+              onPress={() => onComment(post)}
+            >
+              <Image
               source={{ uri: post.image }}
-              className="w-full h-48 rounded-2xl mb-3"
+              className="w-full h-64 rounded-2xl mb-3"
               resizeMode="cover"
             />
+            </TouchableOpacity>
+         
           )}
 
           <View className="flex-row justify-between max-w-xs">

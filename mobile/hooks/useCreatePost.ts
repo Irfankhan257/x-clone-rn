@@ -14,6 +14,9 @@ export const useCreatePost = () => {
     mutationFn: async (postData: { content: string; imageUri?: string }) => {
       const formData = new FormData();
 
+      // console.log(imageUri,"imageUri");
+      
+
       if (postData.content) formData.append("content", postData.content);
 
       if (postData.imageUri) {
@@ -32,7 +35,7 @@ export const useCreatePost = () => {
           name: `image.${fileType}`,
           type: mimeType,
         } as any);
-      }
+      }      
 
       return api.post("/post", formData, {
         headers: { "Content-Type": "multipart/form-data" },
@@ -44,9 +47,11 @@ export const useCreatePost = () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] });
       Alert.alert("Success", "Post created successfully!");
     },
-    onError: () => {
-      Alert.alert("Error", "Failed to create post. Please try again.");
-    },
+    onError: (error: any) => {  Alert.alert(
+    "Error",
+    error?.response?.data?.message || "Failed to create post."
+  );
+}
   });
 
   const handleImagePicker = async (useCamera: boolean = false) => {
@@ -65,7 +70,6 @@ export const useCreatePost = () => {
 
     const pickerOptions = {
       allowsEditing: true,
-      aspect: [16, 9] as [number, number],
       quality: 0.8,
     };
 
