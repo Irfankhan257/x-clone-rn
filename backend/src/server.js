@@ -4,6 +4,7 @@ import { connectDB } from "./config/db.js";
 import cors from "cors";
 import { clerkMiddleware } from "@clerk/express";
 import userRoutes from "./routes/user.route.js";
+import conversationRoutes from "./routes/conversation.route.js";
 import postRoutes from "./routes/post.route.js";
 import commentRoutes from "./routes/comment.route.js";
 import notificationRoutes from "./routes/notification.routes.js";
@@ -23,6 +24,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+app.use("/api/convo", conversationRoutes);
 app.use("/api/post", postRoutes);
 app.use("/api/comment", commentRoutes);
 app.use("/api/notification", notificationRoutes);

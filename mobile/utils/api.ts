@@ -1,9 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL ||
-  "https://x-clone-rn-sepia-six.vercel.app/api";
+const API_BASE_URL = "http://192.168.0.33:3000/api";
 
 export const createApiClient = (
   getToken: () => Promise<string | null>
@@ -19,6 +17,7 @@ export const createApiClient = (
   api.interceptors.request.use(async (config) => {
     const token = await getToken();
     if (token) {
+      console.log("Attaching token to request:", token);
       config.headers.Authorization = `Bearer ${token}`;
     }
 
