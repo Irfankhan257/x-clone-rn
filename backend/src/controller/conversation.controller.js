@@ -67,6 +67,7 @@ export const fetchConversationsForUser = async (req, res) => {
         return {
           id: index + 1,
           user: {
+            id: receiverId,
             name: receiver?.firstName || "Unknown",
             username: receiver?.username || "",
             avatar:

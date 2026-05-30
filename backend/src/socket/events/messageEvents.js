@@ -19,10 +19,7 @@ const messageEvents = (io, socket) => {
         receiverId,
         text,
         status: "sent",
-      });
-
-      console.log(newMessage,"NEWWW MWAaaASAS");
-      
+      });      
 
       let conversation = await Conversation.findOne({
         participants: { $all: [senderId, receiverId] },
