@@ -20,7 +20,7 @@ const io = new Server(socketServer, {
   },
 });
 
-mongoose.connect(ENV.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log("Socket DB connected"))
   .catch(err => console.log(err));
 
