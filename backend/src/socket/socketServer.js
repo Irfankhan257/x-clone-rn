@@ -33,8 +33,8 @@ io.on("connection", (socket) => {
 
 });
 
-const PORT = ENV.SOCKET_PORT || 4000;
+const PORT = ENV.PORT || 4000;
 
 socketServer.listen(PORT, () => {
-  console.log(`Socket server running on port ${ENV.SOCKET_PORT}`);
+  console.log(`Socket server running on port ${ENV.PORT}`);
 });
