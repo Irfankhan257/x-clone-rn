@@ -26,6 +26,7 @@ const MessagesScreen = () => {
 
   const api = useApiClient();
   const { getToken } = useAuth();
+  const myUserId = useAuth().userId;
 
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
@@ -64,14 +65,17 @@ const MessagesScreen = () => {
 useEffect(() => {
   socket.on("receive_message", (message) => {
     console.log("NEW MESSAGE", message);
-
+     const normalizedMessage = {
+    ...message,
+    id: message.id || message._id,
+  };
     // update selected conversation messages
     setSelectedConversation((prev) => {
       if (!prev) return prev;
 
       return {
         ...prev,
-        messages: [...prev.messages, message],
+        messages: [...prev.messages, normalizedMessage],
       };
     });
 
@@ -89,7 +93,7 @@ useEffect(() => {
     );
   });
 
-  socket.on("conversation_updated", (updatedConversation) => {
+ ` socket.on("conversation_updated", (updatedConversation) => {
     console.log("Conversation updated", updatedConversation);
 
     setConversationsList((prev) => {
@@ -110,7 +114,7 @@ useEffect(() => {
 
       return [updatedConversation, ...prev];
     });
-  });
+  });`
 
   return () => {
     socket.off("receive_message");
@@ -130,11 +134,6 @@ useEffect(() => {
     console.log("Fetching conversations...");
     try {
       const response = await convoApi.fetchConversations(api);
-
-      // adjust according to your backend response shape
-
-      console.log(response.data, "RESPONSE FROM DATA");
-      
       setConversationsList(response.data);
     } catch (error) {
       console.log("Error fetching conversations", error);
@@ -165,20 +164,13 @@ useEffect(() => {
   socket.emit("send_message", payload);
 
   // optimistic UI update
- const tempMessage: MessageType = {
-  id: `temp-${Date.now()}`,
-  text: newMessage,
-  time: `temp-${Date.now()}`,
-  fromUser: true,
-  timestamp: new Date(),
-};
 
   setSelectedConversation((prev) => {
   if (!prev) return prev;
 
   return {
     ...prev,
-    messages: [...prev.messages, tempMessage],
+    messages: [...prev.messages],
   };
 });
 
@@ -195,7 +187,6 @@ useEffect(() => {
         : conv
     )
   );
-
   setNewMessage("");
   };
 
@@ -234,10 +225,9 @@ useEffect(() => {
             key={conversation.id}
             className="flex-row items-center p-4 border-b border-gray-50 active:bg-gray-50"
             onPress={() => openConversation(conversation)}
-            onLongPress={() => deleteConversation(conversation.id)}
           >
             <Image
-              source={{ uri: conversation.user.avatar }}
+              source={{ uri: conversation.user?.avatar }}
               className="size-12 rounded-full mr-3"
             />
 
@@ -313,29 +303,32 @@ useEffect(() => {
             <FlatList
               ref={chatScrollRef}
               data={selectedConversation?.messages || []}
-              keyExtractor={(item) => item.id.toString()}
-              renderItem={({ item: message }) => (
+              keyExtractor={(item) => item.id.toString() || item.receiverId.toString()}
+              renderItem={({ item: message }) => {
+                 const isMyMessage = message.senderId === myUserId;
+
+                return (
                 <View
                   className={`flex-row mb-3 ${
-                    message.fromUser ? "justify-end" : ""
+                    (message.fromUser || isMyMessage) ? "justify-end" : ""
                   }`}
                 >
-                  {!message.fromUser && (
+                  {(!message.fromUser && !isMyMessage)&& (
                     <Image
                       source={{ uri: selectedConversation?.user.avatar }}
                       className="size-8 rounded-full mr-2"
                     />
                   )}
 
-                  <View className={`flex-1 ${message.fromUser ? "items-end" : ""}`}>
+                  <View className={`flex-1 ${(message.fromUser || isMyMessage) ? "items-end" : ""}`}>
                     <View
                       className={`rounded-2xl px-4 py-3 max-w-xs ${
-                        message.fromUser ? "bg-blue-500" : "bg-gray-100"
+                        (message.fromUser || isMyMessage) ? "bg-blue-500" : "bg-gray-100"
                       }`}
                     >
                       <Text
                         className={
-                          message.fromUser ? "text-white" : "text-gray-900"
+                          (message.fromUser || isMyMessage) ? "text-white" : "text-gray-900"
                         }
                       >
                         {message.text}
@@ -347,7 +340,7 @@ useEffect(() => {
                     </Text>
                   </View>
                 </View>
-              )}
+              )}}
               contentContainerStyle={{ padding: 16 }}
             />
 

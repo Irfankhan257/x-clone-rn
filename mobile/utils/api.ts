@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from "axios";
 import { useAuth } from "@clerk/clerk-expo";
 
-const API_BASE_URL = "http://192.168.0.33:3000/api";
+const API_BASE_URL = "https://x-clone-rn-sepia-six.vercel.app/api";
 
 export const createApiClient = (
   getToken: () => Promise<string | null>
@@ -53,4 +53,8 @@ export const postApi = {
 export const commentApi = {
   createComment: (api: AxiosInstance, postId: string, content: string) =>
     api.post(`/comment/post/${postId}`, { content }),
+};
+export const convoApi = {
+  fetchConversations: (api: AxiosInstance) =>
+    api.get("/convo/getConvo"),
 };
