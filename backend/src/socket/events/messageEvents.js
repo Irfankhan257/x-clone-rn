@@ -38,7 +38,16 @@ const messageEvents = (io, socket) => {
         await conversation.save();
       }
 
+        console.log("Sender:", senderId);
+        console.log("Receiver:", receiverId);
+
+        console.log(
+          "Receiver room exists:",
+          io.sockets.adapter.rooms.has(receiverId)
+        );
+
       // 5. Emit message to receiver room
+      io.to(senderId).emit("receive_message", newMessage);
       io.to(receiverId).emit("receive_message", newMessage);
 
       // 6. Emit updated conversation to BOTH users

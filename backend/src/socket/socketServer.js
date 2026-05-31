@@ -28,6 +28,11 @@ io.use(socketAuth);
 
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.user.userId);
+
+  socket.join(socket.user.userId);
+
+  console.log(`Socket connected: ${socket.user.userId}`);
+  console.log(`Joined room: ${socket.user.userId}`);
     
   messageEvents(io, socket);
 
