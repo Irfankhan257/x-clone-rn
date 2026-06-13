@@ -48,3 +48,46 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+
+
+
+## add /android/build.gradlew: (step 1)
+buildscript {
+  repositories {
+    google()
+    mavenCentral()
+  }
+  dependencies {
+    classpath('com.android.tools.build:gradle')
+    classpath('com.facebook.react:react-native-gradle-plugin')
+    classpath('org.jetbrains.kotlin:kotlin-gradle-plugin')
+  }
+}
+
+allprojects {
+  repositories {
+    google()
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+  }
+}
+
+subprojects {
+    afterEvaluate {
+        if (it.hasProperty('android')) {
+            it.android.ndkVersion = "29.0.13113456"
+        }
+    }
+}
+
+apply plugin: "expo-root-project"
+apply plugin: "com.facebook.react.rootproject"
+
+
+## in android/app/build.gradle: (step 2)
+
+ndkVersion "29.0.13113456"
+
+## in android/gradle.properties: (step 3)
+
+ndkVersion=29.0.13113456

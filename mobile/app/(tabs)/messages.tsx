@@ -1,24 +1,22 @@
 import { ConversationType, MessageType } from "@/data/conversation";
-import { socket } from "@/utils/socket";
 import { convoApi, useApiClient } from "@/utils/api";
+import { socket } from "@/utils/socket";
 import { Feather } from "@expo/vector-icons";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  Alert,
-  TouchableOpacity,
-  TextInput,
-  ScrollView,
+  FlatList,
   Image,
   Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View
 } from "react-native";
 import {
   SafeAreaView,
   useSafeAreaInsets,
 } from "react-native-safe-area-context";
-import { FlatList } from "react-native";
-import { useRef } from "react";
 
 import { useAuth } from "@clerk/clerk-expo";
 
@@ -34,6 +32,7 @@ const MessagesScreen = () => {
   useState<ConversationType[]>([]);
   const [selectedConversation, setSelectedConversation] =
     useState<ConversationType | null>(null);
+  const [currentChat,setCurrentChat] = useState(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [newMessage, setNewMessage] = useState("");
   const chatScrollRef = useRef<FlatList>(null);
@@ -65,11 +64,11 @@ const MessagesScreen = () => {
 useEffect(() => {
   socket.on("receive_message", (message) => {
     console.log("NEW MESSAGE", message);
-     const normalizedMessage = {
+    const normalizedMessage = {
     ...message,
     id: message.id || message._id,
-  };
-    // update selected conversation messages
+    };
+    
     setSelectedConversation((prev) => {
       if (!prev) return prev;
 
@@ -79,7 +78,6 @@ useEffect(() => {
       };
     });
 
-    // update conversations list preview
     setConversationsList((prev) =>
       prev.map((conv) =>
         conv.user.id === message.senderId
@@ -92,30 +90,6 @@ useEffect(() => {
       )
     );
   });
-
- ` socket.on("conversation_updated", (updatedConversation) => {
-    console.log("Conversation updated", updatedConversation);
-
-    setConversationsList((prev) => {
-      const exists = prev.find(
-        (c) => c.id === updatedConversation._id
-      );
-
-      if (exists) {
-        return prev.map((c) =>
-          c.id === updatedConversation._id
-            ? {
-                ...c,
-                lastMessage: updatedConversation.lastMessage,
-              }
-            : c
-        );
-      }
-
-      return [updatedConversation, ...prev];
-    });
-  });`
-
   return () => {
     socket.off("receive_message");
     socket.off("conversation_updated");
@@ -148,47 +122,56 @@ useEffect(() => {
 
   const closeChatModal = () => {
     setIsChatOpen(false);
-    setSelectedConversation(null);
+    // setSelectedConversation(null);
     setNewMessage("");
   };
 
-  const sendMessage = () => {
+const sendMessage = () => {
   if (!newMessage.trim() || !selectedConversation) return;
+
+  const text = newMessage.trim();
+  const now = new Date();
+
+  const tempMessage: MessageType = {
+    id: `temp-${Date.now()}`, // temporary id, replaced when server echoes back
+    text,
+    fromUser: true,
+    time: "now",
+    timestamp: now,
+  };
 
   const payload = {
     receiverId: selectedConversation.user.id,
-    text: newMessage,
+    text,
   };
 
-  // emit socket event
   socket.emit("send_message", payload);
 
   // optimistic UI update
-
   setSelectedConversation((prev) => {
-  if (!prev) return prev;
-
-  return {
-    ...prev,
-    messages: [...prev.messages],
-  };
-});
-
-
+    if (!prev) return prev;
+    return {
+      ...prev,
+      messages: [...prev.messages, tempMessage],
+    };
+  });
 
   setConversationsList((prev) =>
     prev.map((conv) =>
       conv.id === selectedConversation.id
         ? {
             ...conv,
-            lastMessage: newMessage,
+            messages: [...conv.messages, tempMessage],
+            lastMessage: text,
             time: "now",
+            timestamp: now,
           }
         : conv
     )
   );
+
   setNewMessage("");
-  };
+};
 
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
