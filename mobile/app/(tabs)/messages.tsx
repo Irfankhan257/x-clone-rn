@@ -65,24 +65,27 @@ useEffect(() => {
   socket.on("receive_message", (message) => {
     console.log("NEW MESSAGE", message);
     const normalizedMessage = {
-    ...message,
-    id: message.id || message._id,
+    id: message._id,
+    text: message.text,
+    fromUser: false,
+    time: message.createdAt,
+    timestamp: message.createdAt
     };
-    
-    setSelectedConversation((prev) => {
-      if (!prev) return prev;
-
-      return {
-        ...prev,
-        messages: [...prev.messages, normalizedMessage],
-      };
-    });
+      setSelectedConversation((prev) => {
+        if (!prev) return prev;
+  
+        return {
+          ...prev,
+          messages: [...prev.messages, normalizedMessage],
+        };
+      });
 
     setConversationsList((prev) =>
       prev.map((conv) =>
         conv.user.id === message.senderId
           ? {
               ...conv,
+              messages: [...conv.messages, normalizedMessage ],
               lastMessage: message.text,
               time: "now",
             }
@@ -90,19 +93,7 @@ useEffect(() => {
       )
     );
   });
-  return () => {
-    socket.off("receive_message");
-    socket.off("conversation_updated");
-  };
 }, []);
-
-useEffect(() => {
-  if (selectedConversation?.messages?.length) {
-    setTimeout(() => {
-      chatScrollRef.current?.scrollToEnd({ animated: true });
-    }, 50);
-  }
-}, [selectedConversation?.messages]);
 
   const loadConversations = async () => {
     console.log("Fetching conversations...");
@@ -133,7 +124,7 @@ const sendMessage = () => {
   const now = new Date();
 
   const tempMessage: MessageType = {
-    id: `temp-${Date.now()}`, // temporary id, replaced when server echoes back
+    id: `temp-${Date.now()}`, 
     text,
     fromUser: true,
     time: "now",

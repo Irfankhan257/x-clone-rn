@@ -19,7 +19,6 @@ const formatTime = (date) => {
 
 
 export const fetchConversationsForUser = async (req, res) => {
-    console.log("AUTH:", getAuth(req));
     const { userId } = getAuth(req);
      try {
     const currentUserId = userId;
@@ -38,8 +37,6 @@ export const fetchConversationsForUser = async (req, res) => {
         const receiverId = conv.participants.find(
           (p) => p !== currentUserId
         );
-
-        console.log(`Processing conversation ${index + 1}: Receiver ID:`, receiverId);
 
         // 2. get receiver user info
         const receiver = await User.findOne({ clerkId: receiverId });
@@ -60,8 +57,6 @@ export const fetchConversationsForUser = async (req, res) => {
           timestamp: msg.createdAt,
           time: formatTime(msg.createdAt),
         }));
-
-        console.log(`Messages for convo ${index + 1}:`, messages.length);
 
         // 5. build response like your sample
         return {

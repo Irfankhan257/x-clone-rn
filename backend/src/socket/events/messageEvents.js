@@ -47,7 +47,6 @@ const messageEvents = (io, socket) => {
         );
 
       // 5. Emit message to receiver room
-      io.to(senderId).emit("receive_message", newMessage);
       io.to(receiverId).emit("receive_message", newMessage);
 
       // 6. Emit updated conversation to BOTH users
